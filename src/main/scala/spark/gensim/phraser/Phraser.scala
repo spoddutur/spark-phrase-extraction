@@ -30,7 +30,7 @@ object Phraser {
     "Graph minors A survey").map(x => x.split(" "))
 
     val common_words= mutable.HashSet[String]("of", "with", "without", "and", "or", "the", "a")
-    val phrases = new Phrases(new SimplePhraserConfig().copy(minCount=1, threshold=1.0f, commonWords = Some(common_words)), BigramScorer.getScorer(BigramScorer.DEFAULT))
+    val phrases = new Phrases(new SimplePhrasesConfig().copy(minCount=1, threshold=1.0f, commonWords = Some(common_words)), BigramScorer.getScorer(BigramScorer.DEFAULT))
     phrases.addVocab(sentence_stream)
 
     val bigram_phraser = Phraser(phrases)
@@ -38,7 +38,7 @@ object Phraser {
 
     val bigrams = sentence_stream.map(sentence => bigram_phraser(sentence))
 
-    val trigram_phrases = new Phrases(new SimplePhraserConfig().copy(minCount=1, threshold=1.0f, commonWords = Some(common_words)), BigramScorer.getScorer(BigramScorer.DEFAULT))
+    val trigram_phrases = new Phrases(new SimplePhrasesConfig().copy(minCount=1, threshold=1.0f, commonWords = Some(common_words)), BigramScorer.getScorer(BigramScorer.DEFAULT))
     trigram_phrases.addVocab(bigrams)
     val trigram_phraser = Phraser(trigram_phrases)
     bigrams.foreach(sentence => { println("##########:" + trigram_phraser(sentence).mkString(" ")) } )
@@ -47,7 +47,7 @@ object Phraser {
 
 case class Phraser(phrases_model: Phrases) extends Serializable {
 
-  val config: PhraserConfig = phrases_model.config
+  val config: PhrasesConfig = phrases_model.config
   val phrase_grams = new mutable.HashMap[Seq[String], (Int, Double)]()
   println("source_vocab length %d".format(phrases_model.corpus_vocab.size()))
   var count = 0

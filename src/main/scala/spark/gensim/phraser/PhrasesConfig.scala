@@ -2,7 +2,7 @@ package spark.gensim.phraser
 
 import scala.collection.mutable
 
-trait PhraserConfig extends Serializable {
+trait PhrasesConfig extends Serializable {
 
   val minCount: Int
   val threshold: Float
@@ -16,12 +16,12 @@ trait PhraserConfig extends Serializable {
   }
 }
 
-case class SimplePhraserConfig(
+case class SimplePhrasesConfig(
                                 minCount:Int = 5,
                                 threshold: Float = 10.0F,
                                 maxVocabSize: Int = 40000000,
                                 delimiter: String = "_",
                                 progressPer: Int =50,
-                                var commonWords: Option[mutable.HashSet[String]] = None) extends PhraserConfig
+                                var commonWords: Option[mutable.HashSet[String]] = None) extends PhrasesConfig
 
-object DefaultPhraserConfig extends SimplePhraserConfig()//commonWords = Some(Util.loadStopWords()))
+object DefaultPhrasesConfig extends SimplePhrasesConfig()//commonWords = Some(Util.loadStopWords()))

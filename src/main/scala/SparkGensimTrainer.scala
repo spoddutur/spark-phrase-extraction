@@ -1,5 +1,5 @@
 import org.apache.spark.sql.SparkSession
-import spark.gensim.phraser.{Phrases, SimplePhraserConfig, Util}
+import spark.gensim.phraser.{Phrases, SimplePhrasesConfig, Util}
 import spark.gensim.scorer.BigramScorer
 
 import scala.collection.mutable
@@ -17,7 +17,7 @@ object SparkGensimTrainer {
       .getOrCreate()
 
     val common_words= mutable.HashSet[String]("of", "with", "without", "and", "or", "the", "a")
-    val config = new SimplePhraserConfig().copy(minCount=1, threshold=1.0f, commonWords = Some(common_words))
+    val config = new SimplePhrasesConfig().copy(minCount=1, threshold=1.0f, commonWords = Some(common_words))
     val scorer = BigramScorer.getScorer(BigramScorer.DEFAULT)
     val phrases = Phrases(config, scorer)
     val phrasesBc = spark.sparkContext.broadcast(phrases)

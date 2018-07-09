@@ -1,9 +1,9 @@
 package spark.gensim.scorer
-import spark.gensim.phraser.{PhraserConfig, Vocab}
+import spark.gensim.phraser.{PhrasesConfig, Vocab}
 
 object JaccardBigramScorer extends ContingencyBasedBigramScorer {
 
-  override def score(config: PhraserConfig, vocab: Vocab, corpus_word_count: Int, worda: String, wordb: String, bigram: String): Double = {
+  override def score(config: PhrasesConfig, vocab: Vocab, corpus_word_count: Int, worda: String, wordb: String, bigram: String): Double = {
     val (n_ii, n_ix, n_xi, n_xx) = marginals(vocab, worda, wordb, bigram)
     jaccard(n_ii, n_ix, n_xi, n_xx)
   }

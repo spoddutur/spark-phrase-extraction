@@ -7,14 +7,14 @@ import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
 import scala.util.control.Breaks._
 
-case class Phrases(config: PhraserConfig, scorer: BigramScorer) extends Serializable {
+case class Phrases(config: PhrasesConfig, scorer: BigramScorer) extends Serializable {
 
   var corpus_word_count = 0
   var corpus_min_reduce = 0
   var corpus_vocab = new Vocab(config.delimiter)
   val out_delimiter = " "
 
-  private def learnVocab(sentences: Phraser.SENTENCES_TYPE, config: PhraserConfig): (Int, Vocab, Int) = {
+  private def learnVocab(sentences: Phraser.SENTENCES_TYPE, config: PhrasesConfig): (Int, Vocab, Int) = {
 
     // """Collect unigram/bigram counts from the `sentences` iterable."""
 
@@ -164,9 +164,9 @@ case class Phrases(config: PhraserConfig, scorer: BigramScorer) extends Serializ
 
 object Phrases {
   def main(args: Array[String]): Unit = {
-    val config = DefaultPhraserConfig
+    val config = DefaultPhrasesConfig
     val scorer = BigramScorer.getScorer(BigramScorer.DEFAULT)
-    val p = new Phrases(DefaultPhraserConfig, scorer)
+    val p = new Phrases(DefaultPhrasesConfig, scorer)
     p.corpus_vocab = new Vocab(config.delimiter)
     p.corpus_vocab.addWord("prime_minister", 2)
     p.corpus_vocab.addWord("gold", 2)

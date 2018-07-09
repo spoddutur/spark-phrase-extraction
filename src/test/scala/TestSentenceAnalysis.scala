@@ -37,8 +37,8 @@ object TestAnalyzer extends SentenceAnalyzer {
 
 object TestSentenceAnalysis {
   val commonWords = Some(mutable.HashSet[String]("a", "the", "with", "of"))
-  val COMMON_WORDS_CONFIG = new SimplePhraserConfig().copy(threshold = 1, minCount=1, commonWords = commonWords)
-  val NO_COMMON_WORDS_CONFIG = new SimplePhraserConfig().copy(threshold = 1, minCount=1, commonWords = None)
+  val COMMON_WORDS_CONFIG = new SimplePhrasesConfig().copy(threshold = 1, minCount=1, commonWords = commonWords)
+  val NO_COMMON_WORDS_CONFIG = new SimplePhrasesConfig().copy(threshold = 1, minCount=1, commonWords = None)
 
   val COMMON_WORDS_PHRASES = new Phrases(TestSentenceAnalysis.COMMON_WORDS_CONFIG, DefaultBigramScorer)
   val NO_COMMON_WORDS_PHRASES = new Phrases(TestSentenceAnalysis.NO_COMMON_WORDS_CONFIG, DefaultBigramScorer)

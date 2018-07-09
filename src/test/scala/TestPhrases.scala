@@ -17,7 +17,7 @@ class BaseTestPhrases extends JUnitSuite with Checkers {
 
   @Before
   def init(): Unit = {
-    p = new Phrases(new SimplePhraserConfig().copy(minCount = 1, threshold = 1), DefaultBigramScorer)
+    p = new Phrases(new SimplePhrasesConfig().copy(minCount = 1, threshold = 1), DefaultBigramScorer)
   }
 }
 
@@ -117,7 +117,7 @@ class TestPhrasesData extends BaseTestPhrases {
   @Test
   def testScoringNpmi(): Unit = {
     val testSentences = Array[Array[String]]("graph minors survey human interface".split(" "))
-    val config = new SimplePhraserConfig().copy(threshold=0.5f, minCount=1)
+    val config = new SimplePhrasesConfig().copy(threshold=0.5f, minCount=1)
     val npmi_p = new Phrases(config, BigramScorer.getScorer(BigramScorer.NPMI))
 
     val phrasesWithScores = exportPhrasesWithScore(npmi_p, PhrasesData.sentences, testSentences)
@@ -135,7 +135,7 @@ class TestPhrasesData extends BaseTestPhrases {
 
  @Test
   def testPersistence(): Unit = {
-    val phrases = new Phrases(new SimplePhraserConfig().copy(threshold=1, minCount=0), BigramScorer.getScorer(BigramScorer.NPMI))
+    val phrases = new Phrases(new SimplePhrasesConfig().copy(threshold=1, minCount=0), BigramScorer.getScorer(BigramScorer.NPMI))
     phrases.addVocab(PhrasesData.sentences)
     Util.save[Phrases](phrases, "/tmp/phrases")
     val loaded_phrases = Util.load[Phrases]("/tmp/phrases")
@@ -147,7 +147,7 @@ class TestPhrasesData extends BaseTestPhrases {
 
   @Test
   def testPruning(): Unit = {
-    val phrases = new Phrases(new SimplePhraserConfig().copy(maxVocabSize = 5), DefaultBigramScorer)
+    val phrases = new Phrases(new SimplePhrasesConfig().copy(maxVocabSize = 5), DefaultBigramScorer)
     val bigrams = exportPhrases(phrases, PhrasesData.sentences, PhrasesData.sentences)
     println("###############" + bigrams)
     assertTrue(bigrams.size <= 5)

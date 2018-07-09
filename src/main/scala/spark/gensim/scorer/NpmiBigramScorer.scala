@@ -2,7 +2,7 @@ package spark.gensim.scorer
 
 import java.math.MathContext
 
-import spark.gensim.phraser.{PhraserConfig, Vocab}
+import spark.gensim.phraser.{PhrasesConfig, Vocab}
 
 object NpmiBigramScorer extends BigramScorer {
 
@@ -10,7 +10,7 @@ object NpmiBigramScorer extends BigramScorer {
   """Calculation NPMI score based on `"Normalized (Pointwise) Mutual Information in Colocation Extraction"
   by Gerlof Bouma <https://svn.spraakdata.gu.se/repos/gerlof/pub/www/Docs/npmi-pfd.pdf>`_.
   */
-  override def score(config: PhraserConfig, vocab: Vocab, corpus_word_count: Int, worda: String, wordb: String, bigram: String): Double = {
+  override def score(config: PhrasesConfig, vocab: Vocab, corpus_word_count: Int, worda: String, wordb: String, bigram: String): Double = {
 //    val worda_count = BigDecimal.binary(vocab.getCount(worda).toDouble, MathContext.DECIMAL64)
 //    val wordb_count = BigDecimal.binary(vocab.getCount(wordb).toDouble, MathContext.DECIMAL64)
 //    val bigram_count = BigDecimal.binary(vocab.getCount(bigram).toDouble, MathContext.DECIMAL64)

@@ -2,7 +2,7 @@ import org.junit.{Before, Test}
 import org.scalatest.junit.JUnitSuite
 import org.scalatest.prop.Checkers
 import spark.gensim.phraser.Phraser.SENTENCES_TYPE
-import spark.gensim.phraser.{Phraser, Phrases, SimplePhraserConfig}
+import spark.gensim.phraser.{Phraser, Phrases, SimplePhrasesConfig}
 import spark.gensim.scorer.BigramScorer
 
 import scala.collection.mutable
@@ -50,7 +50,7 @@ class TestPhraser extends JUnitSuite with Checkers {
     common_words= mutable.HashSet[String]("of", "with", "without", "and", "or", "the", "a")
   }
 
-  def sentence_ngrams(config: SimplePhraserConfig, scorer: BigramScorer, sentence_stream: SENTENCES_TYPE, expected_ngrams: Seq[Seq[String]]): SENTENCES_TYPE = {
+  def sentence_ngrams(config: SimplePhrasesConfig, scorer: BigramScorer, sentence_stream: SENTENCES_TYPE, expected_ngrams: Seq[Seq[String]]): SENTENCES_TYPE = {
     val phrases = new Phrases(config, scorer)
     phrases.addVocab(sentence_stream)
     val bigram_phraser = Phraser(phrases)
@@ -66,7 +66,7 @@ class TestPhraser extends JUnitSuite with Checkers {
 
   @Test
   def test_bigrams_and_trigrams_with_default_scorer(): Unit = {
-    val config = new SimplePhraserConfig().copy(minCount=1, threshold=1.0f, commonWords = Some(common_words))
+    val config = new SimplePhrasesConfig().copy(minCount=1, threshold=1.0f, commonWords = Some(common_words))
     val default_scorer = BigramScorer.getScorer(BigramScorer.DEFAULT)
     val sentence_bigrams = sentence_ngrams(config, default_scorer, sentence_stream, expected_bigrams_default_scorer)
     val sentence_trigrams = sentence_ngrams(config, default_scorer, sentence_bigrams, expected_trigrams_default_scorer)
@@ -77,7 +77,7 @@ class TestPhraser extends JUnitSuite with Checkers {
     */
   @Test
   def test_bigrams_npmi_scorer(): Unit = {
-    val config = new SimplePhraserConfig().copy(minCount=1, threshold=0.5f, commonWords = Some(common_words))
+    val config = new SimplePhrasesConfig().copy(minCount=1, threshold=0.5f, commonWords = Some(common_words))
     val scorer = BigramScorer.getScorer(BigramScorer.NPMI)
     sentence_ngrams(config, scorer, sentence_stream, expected_bigrams_npmi_scorer)
 //    val phrases = new Phrases(new SimplePhraserConfig().copy(minCount=1, threshold=0.5f, commonWords = Some(common_words)), BigramScorer.getScorer(BigramScorer.NPMI))
