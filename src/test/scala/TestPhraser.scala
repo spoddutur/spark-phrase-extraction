@@ -73,19 +73,12 @@ class TestPhraser extends JUnitSuite with Checkers {
   }
 
   /**
-    * npmi_scorer threshold 1 will not detect any bigrams in input_sentence_stream
+    * npmi_scorer with threshold=0.5
     */
   @Test
   def test_bigrams_npmi_scorer(): Unit = {
     val config = new SimplePhrasesConfig().copy(minCount=1, threshold=0.5f, commonWords = Some(common_words))
     val scorer = BigramScorer.getScorer(BigramScorer.NPMI)
     sentence_ngrams(config, scorer, sentence_stream, expected_bigrams_npmi_scorer)
-//    val phrases = new Phrases(new SimplePhraserConfig().copy(minCount=1, threshold=0.5f, commonWords = Some(common_words)), BigramScorer.getScorer(BigramScorer.NPMI))
-//    phrases.addVocab(sentence_stream)
-//    val bigram_phraser = Phraser(phrases)
-//    val bigrams = sentence_stream.map(sentence => bigram_phraser(sentence).toSeq).toSeq
-//    println(bigrams)
-    // assert(sentence_stream.map(x => x.toSeq).toSeq.diff(bigrams).isEmpty)
-    // assert(expected_bigrams_npmi_scorer.diff(bigrams).isEmpty)
   }
 }

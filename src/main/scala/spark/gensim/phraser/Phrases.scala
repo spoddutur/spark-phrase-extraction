@@ -1,6 +1,5 @@
 package spark.gensim.phraser
 
-import Vocab
 import spark.gensim.scorer.BigramScorer
 
 import scala.collection.mutable

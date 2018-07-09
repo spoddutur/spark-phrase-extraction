@@ -1,21 +1,9 @@
-import org.scalatest._
-import org.scalatest.junit.JUnitSuite
-import org.scalacheck.Prop._
-import org.scalacheck.Arbitrary._
-import org.scalatest.prop.Checkers
-import org.scalatest.junit.AssertionsForJUnit
-
-import scala.collection.mutable.ListBuffer
-import org.junit.Assert._
 import org.junit.Test
 import org.junit.Before
-import spark.gensim.common.DefaultPhraserConfig
 import spark.gensim.phraser._
 import spark.gensim.scorer.{BigramScorer, DefaultBigramScorer}
 
-import scala.collection.immutable.HashMap
 import scala.collection.mutable
-import scala.collection.parallel.immutable
 
 object TestAnalyzer extends SentenceAnalyzer {
 
