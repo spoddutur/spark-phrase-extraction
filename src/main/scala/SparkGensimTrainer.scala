@@ -1,7 +1,6 @@
 import org.apache.spark.sql.SparkSession
-import spark.gensim.common.{SimplePhraserConfig, Util}
-import spark.gensim.phraser.Phrases
-import spark.gensim.score.BigramScorer
+import spark.gensim.phraser.{Phrases, SimplePhraserConfig, Util}
+import spark.gensim.scorer.BigramScorer
 
 import scala.collection.mutable
 

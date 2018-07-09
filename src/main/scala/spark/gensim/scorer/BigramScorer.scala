@@ -1,8 +1,8 @@
-package spark.gensim.score
+package spark.gensim.scorer
 
 import java.math.MathContext
 
-import spark.gensim.common.{PhraserConfig, Vocab}
+import spark.gensim.phraser.{PhraserConfig, Vocab}
 
 trait BigramScorer extends Serializable {
   def score(config: PhraserConfig, vocab: Vocab, corpus_word_count: Int, worda: String, wordb: String, bigram: String): Double

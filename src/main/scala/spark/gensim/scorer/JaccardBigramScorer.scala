@@ -1,5 +1,5 @@
-package spark.gensim.score
-import spark.gensim.common.{PhraserConfig, Vocab}
+package spark.gensim.scorer
+import spark.gensim.phraser.{PhraserConfig, Vocab}
 
 object JaccardBigramScorer extends ContingencyBasedBigramScorer {
 

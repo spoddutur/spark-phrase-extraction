@@ -1,7 +1,7 @@
 package spark.gensim.phraser
 
-import spark.gensim.common.{DefaultPhraserConfig, PhraserConfig, Vocab}
-import spark.gensim.score.BigramScorer
+import Vocab
+import spark.gensim.scorer.BigramScorer
 
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer

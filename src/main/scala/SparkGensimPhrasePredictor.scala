@@ -1,6 +1,5 @@
 import org.apache.spark.sql.SparkSession
-import spark.gensim.common.Util
-import spark.gensim.phraser.{Phraser, Phrases}
+import spark.gensim.phraser.{Phraser, Phrases, Util}
 
 //// http://dspace.uib.no/bitstream/handle/1956/11033/lyse-andersen-mwe-final.pdf?sequence=1&isAllowed=y
 object SparkGensimPhrasePredictor {

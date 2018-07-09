@@ -9,9 +9,9 @@ import scala.collection.mutable.ListBuffer
 import org.junit.Assert._
 import org.junit.Test
 import org.junit.Before
-import spark.gensim.common.{DefaultPhraserConfig, PhraserConfig, SimplePhraserConfig, Vocab}
-import spark.gensim.phraser.{DefaultSentenceAnalyzer, Phraser, Phrases, SentenceAnalyzer}
-import spark.gensim.score.{BigramScorer, DefaultBigramScorer}
+import spark.gensim.common.DefaultPhraserConfig
+import spark.gensim.phraser._
+import spark.gensim.scorer.{BigramScorer, DefaultBigramScorer}
 
 import scala.collection.immutable.HashMap
 import scala.collection.mutable

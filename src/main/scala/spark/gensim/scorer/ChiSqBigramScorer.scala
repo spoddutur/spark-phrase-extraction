@@ -1,6 +1,6 @@
-package spark.gensim.score
+package spark.gensim.scorer
 
-import spark.gensim.common.{PhraserConfig, Vocab}
+import spark.gensim.phraser.{PhraserConfig, Vocab}
 
 object ChiSqBigramScorer extends ContingencyBasedBigramScorer {
 

@@ -1,6 +1,6 @@
-package spark.gensim.score
+package spark.gensim.scorer
 
-import spark.gensim.common.Vocab
+import spark.gensim.phraser.Vocab
 
 import scala.collection.mutable.ListBuffer
 

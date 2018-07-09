@@ -6,9 +6,8 @@ import org.scalatest.prop.Checkers
 import org.junit.Assert._
 import org.junit.Test
 import org.junit.Before
-import spark.gensim.common.{SimplePhraserConfig, Util, Vocab}
-import spark.gensim.phraser.{Phraser, Phrases}
-import spark.gensim.score.{BigramScorer, DefaultBigramScorer}
+import spark.gensim.phraser._
+import spark.gensim.scorer.{BigramScorer, DefaultBigramScorer}
 
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer

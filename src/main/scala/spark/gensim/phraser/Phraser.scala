@@ -1,8 +1,7 @@
 package spark.gensim.phraser
 
-import spark.gensim.common.{PhraserConfig, SimplePhraserConfig, Util}
 import spark.gensim.phraser.Phraser.SENTENCE_TYPE
-import spark.gensim.score.BigramScorer
+import spark.gensim.scorer.BigramScorer
 
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
