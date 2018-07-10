@@ -8,7 +8,8 @@ Gensim is originally a Python library ([found here](https://github.com/RaRe-Tech
 
 **Target audience:** is the natural language processing (NLP) and information retrieval (IR) community.
 <br/>
-It provides:
+
+## spark-gensim-parser provides:
 
 - Scala interface enabling use of Gensim directly from Scala-Spark.
 - DSL to use Spark data structures as input for Gensim's algorithms.
