@@ -1,0 +1,11 @@
+language: scala
+sudo: true
+dist: precise
+
+dist: trusty
+
+jdk:
+  - oraclejdk8
+  - openjdk8
+
+script: travis_wait 30 mvn clean test -PscalaBaseVersion=2.11.4
