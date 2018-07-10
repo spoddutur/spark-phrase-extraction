@@ -6,21 +6,13 @@ Gensim is originally a Python library ([found here](https://github.com/RaRe-Tech
 
 **Integrated Version:** <img src="https://user-images.githubusercontent.com/22542670/42492038-13f9f8ec-8435-11e8-830e-9d7152acb421.png" width="200"/>
 
-**Target audience:** is the natural language processing (NLP) and information retrieval (IR) community.
+**Target audience:** Spark-Scala ML applications in the need of collocations phrase detection for their natural language processing (NLP) and information retrieval (IR) tasks.
 <br/>
 
 ## spark-gensim-parser provides:
 
 - Scala interface enabling use of Gensim directly from Scala-Spark.
 - DSL to use Spark data structures as input for Gensim's algorithms.
-- Basic building blocks to create ML applications utilizing GenSim API's to:
-  - To Train a distributed corpus vocabulary
-  - To Save the trained model
-  - To load a saved model and use it with its corpus knowledge to predict collocated n-gram phrases in input sentences.
-  - Scoring:
-    - Supports default python-gensim scorers: Original Scoring and NPMI Scoring
-    - Enabled config-based-approach to plugin and play custom scorers
-    - Added Contingency-Based scorers for use with Phraser like ChiSq, Jaccard, LogLikelyHood etc
 
 ## How to Run
 - Link to ipynb notebook
@@ -31,3 +23,12 @@ Gensim is originally a Python library ([found here](https://github.com/RaRe-Tech
 - [Python-Gensim.ipynb on How to use it](https://github.com/jdwittenauer/ipython-notebooks/blob/master/notebooks/libraries/Gensim.ipynb)
 - [Custom Scoring support via contingency-based scoring for collocations and statistical analysis of n-grams](http://dspace.uib.no/bitstream/handle/1956/11033/lyse-andersen-mwe-final.pdf?sequence=1&isAllowed=y)
 
+## Appendix
+- Basic building blocks to create ML applications utilizing GenSim API's to:
+  - To Train a distributed corpus vocabulary
+  - To Save the trained model
+  - To load a saved model and use it with its corpus knowledge to predict collocated n-gram phrases in input sentences.
+  - Scoring:
+    - Supports default python-gensim scorers: Original Scoring and NPMI Scoring
+    - Enabled config-based-approach to plugin and play custom scorers
+    - Added Contingency-Based scorers for use with Phraser like ChiSq, Jaccard, LogLikelyHood etc
