@@ -1,10 +1,10 @@
-# spark-gensim-parser
 
-Gensim is originally a Python library ([found here](https://github.com/RaRe-Technologies/gensim)) for topic modelling, document indexing and similarity retrieval with large corpora. [**spark-gensim-parser**](https://github.com/spoddutur/spark-gensim-parser) integrates [gensim's collocation phrase detection python module](https://github.com/RaRe-Technologies/gensim/blob/develop/gensim/models/phrases.py) with Spark-Scala.
+# Spark Phrase Extraction : Automated phrase mining from huge text corpus using Apache Spark
+
+This library is similar to phrase extraction implementation Gensim([found here](https://github.com/RaRe-Technologies/gensim)) but for huge text corpus at scale using apache Spark. 
 
 <br/>
 
-**Integrated Version:** <img src="https://user-images.githubusercontent.com/22542670/42492038-13f9f8ec-8435-11e8-830e-9d7152acb421.png" width="200"/>
 
 **Target audience:** Spark-Scala ML applications in the need of collocations phrase detection for their natural language processing (NLP) and information retrieval (IR) tasks.
 <br/>
