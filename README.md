@@ -3,8 +3,8 @@
 
 This library is similar to phrase extraction implementation in Gensim([found here](https://github.com/RaRe-Technologies/gensim)) but for huge text corpus at scale using apache Spark. 
 
-<br/>
 
+[![Build Status](https://travis-ci.org/spoddutur/spark-gensim-parser.svg?branch=master)](https://travis-ci.org/spoddutur/spark-gensim-parser)
 
 **Target audience:** Spark-Scala ML applications in the need of collocations phrase detection for their natural language processing (NLP) and information retrieval (IR) tasks.
 <br/>
