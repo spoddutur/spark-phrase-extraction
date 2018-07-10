@@ -28,6 +28,6 @@ Gensim is originally a Python library ([found here](https://github.com/RaRe-Tech
 ## References
 - [Official Python-Gensim Documentation](https://radimrehurek.com/gensim/models/phrases.html)
 - [Python-Gensim Github](https://github.com/RaRe-Technologies/gensim)
-- [How to use](https://github.com/jdwittenauer/ipython-notebooks/blob/master/notebooks/libraries/Gensim.ipynb)
-- [Contingency based scoring for collocations and statistical analysis of n-grams]http://dspace.uib.no/bitstream/handle/1956/11033/lyse-andersen-mwe-final.pdf?sequence=1&isAllowed=y
+- [Python-Gensim.ipynb on How to use it](https://github.com/jdwittenauer/ipython-notebooks/blob/master/notebooks/libraries/Gensim.ipynb)
+- [Custom Scoring support via contingency-based scoring for collocations and statistical analysis of n-grams](http://dspace.uib.no/bitstream/handle/1956/11033/lyse-andersen-mwe-final.pdf?sequence=1&isAllowed=y)
 
