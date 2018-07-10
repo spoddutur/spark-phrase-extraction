@@ -15,7 +15,7 @@ Gensim is originally a Python library ([found here](https://github.com/RaRe-Tech
 - DSL to use Spark data structures as input for Gensim's algorithms.
 
 ## How to Run
-- Link to ipynb notebook
+- Link to ipynb notebook (TODO)
 
 ## References
 - [Official Python-Gensim Documentation](https://radimrehurek.com/gensim/models/phrases.html)
