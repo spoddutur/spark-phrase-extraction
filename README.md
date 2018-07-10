@@ -1,7 +1,7 @@
 
 # Spark Phrase Extraction : Automated phrase mining from huge text corpus using Apache Spark
 
-This library is similar to phrase extraction implementation Gensim([found here](https://github.com/RaRe-Technologies/gensim)) but for huge text corpus at scale using apache Spark. 
+This library is similar to phrase extraction implementation in Gensim([found here](https://github.com/RaRe-Technologies/gensim)) but for huge text corpus at scale using apache Spark. 
 
 <br/>
 
