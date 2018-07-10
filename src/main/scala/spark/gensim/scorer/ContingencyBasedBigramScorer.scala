@@ -10,9 +10,10 @@ trait ContingencyBasedBigramScorer  extends BigramScorer {
     *
     * Bigram here can contain multiple words. So, taking in worda, wordb and bigram separately.
     * @param vocab corpus
-    * @param worda "bank_of"
-    * @param wordb "america"
-    * @param bigram "bank_of_america"
+    * @param worda ex: "bank"
+    * @param wordb ex: "america"
+    * @param bigram ex: "bank_of_america"
+    *                (notice: no common words in worda and wordb. but bigram can have common words)
     * @return
     */
   def contingency(vocab: Vocab, worda: String, wordb: String, bigram: String): (Int, Int, Int, Int) = {

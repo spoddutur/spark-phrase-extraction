@@ -26,12 +26,15 @@ object BigramScorer {
   }
 }
 
-// original gensim scorer
+/*
+ Original or default gensim scorer
+ */
 object DefaultBigramScorer extends BigramScorer {
+
   /*
     Bigram scoring function, based on the original `Mikolov, et. al: "Distributed Representations
     of Words and Phrases and their Compositionality" <https://arxiv.org/abs/1310.4546>`_.
-*/
+  */
   override def score(config: PhrasesConfig, vocab: Vocab, corpus_word_count: Int, worda: String, wordb: String, bigram: String): Double = {
     val worda_count = vocab.getCount(worda).toDouble
     val wordb_count = vocab.getCount(wordb).toDouble

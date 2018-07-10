@@ -162,6 +162,8 @@ case class Phrases(config: PhrasesConfig, scorer: BigramScorer) extends Serializ
 }
 
 object Phrases {
+
+  // main() to run phrases on random sentence_stream and check the pseudo_corpus.
   def main(args: Array[String]): Unit = {
     val config = DefaultPhrasesConfig
     val scorer = BigramScorer.getScorer(BigramScorer.DEFAULT)

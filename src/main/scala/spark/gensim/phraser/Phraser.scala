@@ -6,45 +6,6 @@ import spark.gensim.scorer.BigramScorer
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
 
-object Phraser {
-  type SENTENCE_TYPE = Array[String]
-  type SENTENCES_TYPE = Array[SENTENCE_TYPE]
-  type PHRASES_TYPE = Array[String]
-
-  def main(args: Array[String]): Unit = {
-    val sentence_stream = Array[Array[String]](
-      "the mayor of san francisco was there".split(" "),
-      "san francisco is beautiful city".split(" "),
-      "machine learning can be useful sometimes".split(" "),
-      "the city of san francisco is beautiful".split(" "),
-      "machine learning code is in python".split(" "))
-
-    val sentence_stream0 = Array("Human Machine interface for lab abc computer applications",
-    "A survey of user opinion of computer system response time",
-    "The EPS user interface management system",
-    "System and Human Machine engineering testing of EPS",
-    "Relation of user perceived response time to error measurement",
-    "The generation of random binary unordered trees",
-    "The intersection graph of paths in trees",
-    "Graph minors IV Widths of trees and well quasi ordering",
-    "Graph minors A survey").map(x => x.split(" "))
-
-    val common_words= mutable.HashSet[String]("of", "with", "without", "and", "or", "the", "a")
-    val phrases = new Phrases(new SimplePhrasesConfig().copy(minCount=1, threshold=1.0f, commonWords = Some(common_words)), BigramScorer.getScorer(BigramScorer.DEFAULT))
-    phrases.addVocab(sentence_stream)
-
-    val bigram_phraser = Phraser(phrases)
-   //  sentence_stream.foreach(sentence => println("$$$$$$$$$$: " + bigram_phraser(sentence).mkString(" ")))
-
-    val bigrams = sentence_stream.map(sentence => bigram_phraser(sentence))
-
-    val trigram_phrases = new Phrases(new SimplePhrasesConfig().copy(minCount=1, threshold=1.0f, commonWords = Some(common_words)), BigramScorer.getScorer(BigramScorer.DEFAULT))
-    trigram_phrases.addVocab(bigrams)
-    val trigram_phraser = Phraser(trigram_phrases)
-    bigrams.foreach(sentence => { println("##########:" + trigram_phraser(sentence).mkString(" ")) } )
-  }
-}
-
 case class Phraser(phrases_model: Phrases) extends Serializable {
 
   val config: PhrasesConfig = phrases_model.config
@@ -96,5 +57,48 @@ case class Phraser(phrases_model: Phrases) extends Serializable {
       //}
     }
     sentenceOutput.toArray
+  }
+}
+
+object Phraser {
+  type SENTENCE_TYPE = Array[String]
+  type SENTENCES_TYPE = Array[SENTENCE_TYPE]
+  type PHRASES_TYPE = Array[String]
+
+  def main(args: Array[String]): Unit = {
+
+    // Run and test phraser with sample sentences in main()
+    // 1. Get bigrams for input sentence_stream
+    // 2. Use bigrams as input sentence_stream and generate trigrams
+    val sentence_stream = Array[Array[String]](
+      "the mayor of san francisco was there".split(" "),
+      "san francisco is beautiful city".split(" "),
+      "machine learning can be useful sometimes".split(" "),
+      "the city of san francisco is beautiful".split(" "),
+      "machine learning code is in python".split(" "))
+
+    val sentence_stream0 = Array("Human Machine interface for lab abc computer applications",
+      "A survey of user opinion of computer system response time",
+      "The EPS user interface management system",
+      "System and Human Machine engineering testing of EPS",
+      "Relation of user perceived response time to error measurement",
+      "The generation of random binary unordered trees",
+      "The intersection graph of paths in trees",
+      "Graph minors IV Widths of trees and well quasi ordering",
+      "Graph minors A survey").map(x => x.split(" "))
+
+    val common_words= mutable.HashSet[String]("of", "with", "without", "and", "or", "the", "a")
+
+    // 1. get bigrams for input sentence_stream
+    val phrases = new Phrases(new SimplePhrasesConfig().copy(minCount=1, threshold=1.0f, commonWords = Some(common_words)), BigramScorer.getScorer(BigramScorer.DEFAULT))
+    phrases.addVocab(sentence_stream)
+    val bigram_phraser = Phraser(phrases)
+    val bigrams = sentence_stream.map(sentence => bigram_phraser(sentence))
+
+    // 2. use bigrams as input sentence_stream and generate trigrams
+    val trigram_phrases = new Phrases(new SimplePhrasesConfig().copy(minCount=1, threshold=1.0f, commonWords = Some(common_words)), BigramScorer.getScorer(BigramScorer.DEFAULT))
+    trigram_phrases.addVocab(bigrams)
+    val trigram_phraser = Phraser(trigram_phrases)
+    bigrams.foreach(sentence => { println("##########:" + trigram_phraser(sentence).mkString(" ")) } )
   }
 }

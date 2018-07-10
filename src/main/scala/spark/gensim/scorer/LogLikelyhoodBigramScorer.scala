@@ -8,6 +8,16 @@ object LogLikelyhoodBigramScorer extends ContingencyBasedBigramScorer {
 
   private val SMALL = 1e-20
 
+  /**
+    * Use marginals of bigram to compute loglikelyhood
+    * @param config - phraser config. (contains params like minCount, threshold etc. not used in this scorer )
+    * @param vocab - corpus vocab learnt
+    * @param corpus_word_count - total corpus words count (not used in this scorer)
+    * @param worda - bigram first token
+    * @param wordb - bigram second token
+    * @param bigram - bigram to score
+    * @return loglikelyhood score for bigram [log(pab/(pa*pb)) / -log(pab)]
+    */
   override def score(config: PhrasesConfig, vocab: Vocab, corpus_word_count: Int, worda: String, wordb: String, bigram: String): Double = {
     val (n_ii, n_ix, n_xi, n_xx) = marginals(vocab, worda, wordb, bigram)
     likelyhood_ratio(n_ii, n_ix, n_xi, n_xx).toFloat

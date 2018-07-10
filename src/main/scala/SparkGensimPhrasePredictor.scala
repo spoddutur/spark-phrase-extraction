@@ -16,12 +16,6 @@ object SparkGensimPhrasePredictor {
     val phrases = Util.load[Phrases]("/tmp/gensim-model")
     val phraserBc = spark.sparkContext.broadcast(new Phraser(phrases))
 
-//    val sentencesDf = spark.readStream
-//      .format("text")
-//      .option("maxFilesPerTrigger", 1)
-//      .load("/tmp/input").as[String]
-
-    // phrases.addVocab(sentencesDf.collect())
     import spark.implicits._
     val sentencesDf = spark.read
       .format("text")

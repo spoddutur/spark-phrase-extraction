@@ -32,7 +32,6 @@ class TestPhrases extends BaseTestPhrases {
     p.corpus_vocab.addWord("effective", 2)
 
     val pc = p.pseudoCorpus().map(x => x.toSeq).toSeq
-    // expected pseudo corpus = Seq[Seq[String]](Seq[String]("prime", "minister"), Seq[String]("chief", "technical_officer"), Seq[String]("chief_technical", "officer"))
     assert(pc.size.equals(3))
     assert(pc.contains(Seq[String]("prime", "minister")))
     assert(pc.contains(Seq[String]("chief", "technical_officer")))
@@ -50,7 +49,6 @@ class TestPhrases extends BaseTestPhrases {
 
     p.config.commonWords = Some(mutable.HashSet[String]("in", "the", "of"))
     val pc = p.pseudoCorpus().map(x => x.toSeq).toSeq
-    // expected pseudo corpus = Seq(Seq("beware", "of", "the", "dog_in_the_yard"), Seq("beware_of_the_dog", "in", "the", "yard"), Seq("chief", "of", "political_bureau"), Seq("chief_of_political", "bureau"), Seq("hall", "of", "fame"))
     assert(pc.size.equals(5))
     assert(pc.contains(Seq("beware", "of", "the", "dog_in_the_yard")))
     assert(pc.contains(Seq("beware_of_the_dog", "in", "the", "yard")))
@@ -78,7 +76,6 @@ class TestPhrasesData extends BaseTestPhrases {
     // """Test Phrases bigram export_phrases functionality."""
 
     val bigrams = exportPhrases(p, PhrasesData.sentences, PhrasesData.sentences)
-    println("############" + bigrams.mkString(","))
 
     // expected bigrams "response time", "graph minors", "human interface"
     assert(bigrams.size.equals(3))
@@ -92,7 +89,6 @@ class TestPhrasesData extends BaseTestPhrases {
   def testMultipleBigramsSingleEntry(): Unit = {
     val sentences = Array[Array[String]]("graph minors survey human interface".split(" "))
     val bigrams = exportPhrases(p,PhrasesData.sentences, sentences)
-    println("############" + bigrams.mkString(","))
     assert(bigrams.diff(Set[String]("graph minors", "human interface")).isEmpty)
     assert(bigrams.size.equals(2))
     assert(bigrams.contains("graph minors"))
@@ -111,7 +107,6 @@ class TestPhrasesData extends BaseTestPhrases {
     assert(scores.size.equals(2))
     assert(scores.contains(5.167))
     assert(scores.contains(3.444))
-    // assert(scores.diff(Seq[Double](5.167, 3.444)).isEmpty)
   }
 
   @Test
@@ -126,7 +121,6 @@ class TestPhrasesData extends BaseTestPhrases {
       val bigram = phrases.mkString(" ")
       scores += Math.round(score * 1000)/1000.toDouble
     }
-    println("############" + scores)
     assert(scores.size.equals(2))
     assert(scores.contains(0.882))
     assert(scores.contains(0.714))
@@ -149,7 +143,6 @@ class TestPhrasesData extends BaseTestPhrases {
   def testPruning(): Unit = {
     val phrases = new Phrases(new SimplePhrasesConfig().copy(maxVocabSize = 5), DefaultBigramScorer)
     val bigrams = exportPhrases(phrases, PhrasesData.sentences, PhrasesData.sentences)
-    println("###############" + bigrams)
     assertTrue(bigrams.size <= 5)
   }
 }

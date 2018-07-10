@@ -22,17 +22,12 @@ object SparkGensimTrainer {
     val phrases = Phrases(config, scorer)
     val phrasesBc = spark.sparkContext.broadcast(phrases)
 
-//    val sentencesDf = spark.readStream
-//      .format("text")
-//      .option("maxFilesPerTrigger", 1)
-//      .load("/tmp/input").as[String]
-
-    // phrases.addVocab(sentencesDf.collect())
-
     import spark.implicits._
     val sentencesDf = spark.read
       .format("text")
       .load("/tmp/gensim-input").as[String]
+
+    val df = spark.sparkContext.parallelize(Array[String]("")).toDF()
 
     sentencesDf.foreach(sentence => phrasesBc.value.addVocab(Seq(sentence.split(" ")).toArray))
 
