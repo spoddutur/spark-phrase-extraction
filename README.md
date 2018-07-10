@@ -6,6 +6,9 @@ This library is similar to phrase extraction implementation in Gensim([found her
 
 [![Build Status](https://travis-ci.org/spoddutur/spark-gensim-parser.svg?branch=master)](https://travis-ci.org/spoddutur/spark-gensim-parser)
 
+[![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/spoddutur/spark-phrase-extraction?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=body_badge)
+
+
 **Target audience:** Spark-Scala ML applications in the need of collocations phrase detection for their natural language processing (NLP) and information retrieval (IR) tasks.
 <br/>
 
