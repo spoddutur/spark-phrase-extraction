@@ -1,5 +1,6 @@
 package spark.gensim.phraser
 
+import scala.collection.mutable
 import scala.collection.mutable.HashMap
 
 /**
@@ -38,6 +39,10 @@ case class Vocab(delimiter: String, wordCounts: HashMap[String, Int] = new HashM
     for(e <- vocab.wordCounts) {
       this.addWord(e._1, e._2)
     }
+  }
+
+  def merge(vocab: HashMap[String, Int]): Unit = {
+    vocab.foreach(x => this.addWord(x._1, x._2))
   }
 
   private def numDelimiters(word: String): Int = {

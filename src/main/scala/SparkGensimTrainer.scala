@@ -1,5 +1,6 @@
 import org.apache.spark.sql.SparkSession
-import spark.gensim.phraser.{Phrases, SimplePhrasesConfig, Util}
+import spark.gensim.{CorpusHolder, SentenceCorpus}
+import spark.gensim.phraser.{Phrases, PhrasesConfig, SimplePhrasesConfig, Util}
 import spark.gensim.scorer.BigramScorer
 
 import scala.collection.mutable
@@ -17,24 +18,34 @@ object SparkGensimTrainer {
       .getOrCreate()
 
     val common_words= mutable.HashSet[String]("of", "with", "without", "and", "or", "the", "a")
-    val config = new SimplePhrasesConfig().copy(minCount=1, threshold=1.0f, commonWords = Some(common_words))
+    val config: PhrasesConfig = new SimplePhrasesConfig().copy(minCount=1, threshold=1.0f, commonWords = Some(common_words))
+    val configBc = spark.sparkContext.broadcast(config)
     val scorer = BigramScorer.getScorer(BigramScorer.DEFAULT)
-    val phrases = Phrases(config, scorer)
-    val phrasesBc = spark.sparkContext.broadcast(phrases)
+//  val phrases = Phrases(config, scorer)
+//  val phrasesBc = spark.sparkContext.broadcast(phrases)
+    CorpusHolder.init(spark, config, scorer)
 
     import spark.implicits._
     val sentencesDf = spark.read
       .format("text")
       .load("/tmp/gensim-input").as[String]
 
-    val df = spark.sparkContext.parallelize(Array[String]("")).toDF()
+    CorpusHolder.update(spark, sentencesDf, configBc)
 
-    sentencesDf.foreach(sentence => phrasesBc.value.addVocab(Seq(sentence.split(" ")).toArray))
+    // val df = spark.sparkContext.parallelize(Array[String]("")).toDF()
 
-    sys.ShutdownHookThread {
-      println(phrases.pseudoCorpus())
-      Util.save(phrases, "/tmp/gensim-model")
-      spark.stop()
-    }
+   //  sentencesDf.foreach(sentence => phrasesBc.value.addVocab(Seq(sentence.split(" ")).toArray))
+
+//    sys.ShutdownHookThread {
+//      // println(phrases.pseudoCorpus())
+//      // Util.save(phrases, "/tmp/gensim-model")
+//      import spark.implicits._
+//      val spark1 = spark.newSession()
+//      val x = spark1.sql("SELECT * FROM global_temp.sentence_corpus").as[SentenceCorpus].collectAsList()
+//
+//      println("***************************************")
+//      spark.stop()
+//      spark1.stop()
+//    }
   }
 }

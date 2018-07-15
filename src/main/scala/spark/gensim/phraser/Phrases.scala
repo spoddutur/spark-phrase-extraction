@@ -1,5 +1,6 @@
 package spark.gensim.phraser
 
+import spark.gensim.SentenceCorpus
 import spark.gensim.scorer.BigramScorer
 
 import scala.collection.mutable
@@ -13,66 +14,17 @@ case class Phrases(config: PhrasesConfig, scorer: BigramScorer) extends Serializ
   var corpus_vocab = new Vocab(config.delimiter)
   val out_delimiter = " "
 
-  private def learnVocab(sentences: Phraser.SENTENCES_TYPE, config: PhrasesConfig): (Int, Vocab, Int) = {
-
-    // """Collect unigram/bigram counts from the `sentences` iterable."""
-
-    var sentence_no = -1
-    var total_words = 0
-
-    println("collecting all words and their counts:" + sentences)
-    var vocab_for_given_sentences = new Vocab(config.delimiter)
-    var min_reduce = 1
-    for (sentence <- sentences) {
-      sentence_no = sentence_no + 1
-      if (sentence_no % config.progressPer == 0) {
-        println("PROGRESS: at sentence #%d, processed %d words and %d word types".format(sentence_no, total_words, vocab_for_given_sentences.size))
-      }
-
-      // get nGrams for sentence
-      var last_uncommon_word: Option[String] = None
-      var in_between_words: Option[ListBuffer[String]] = None
-      for (word <- sentence) {
-        val is_not_common = !config.isCommonWord(word)
-        if (is_not_common) {
-          vocab_for_given_sentences.addWord(word, 1)
-          if (last_uncommon_word.isDefined) {
-            var chain = Seq(last_uncommon_word.get)
-            if(in_between_words.isDefined) {
-              chain = chain ++ in_between_words.get
-            }
-            chain = chain ++ Seq(word)
-            vocab_for_given_sentences.addWord(chain.mkString(vocab_for_given_sentences.delimiter), 1)
-          }
-          last_uncommon_word = Some(word)
-          in_between_words = None
-        } else if (last_uncommon_word.isDefined) {
-          if(in_between_words.isDefined) {
-            in_between_words.get += word
-          } else {
-            in_between_words = Some(ListBuffer[String](word))
-          }
-        }
-        total_words = total_words + 1
-      }
-
-      if (vocab_for_given_sentences.size() > config.maxVocabSize) {
-        // prune
-        vocab_for_given_sentences.pruneVocab(min_reduce)
-        min_reduce = min_reduce + 1
-      }
-    }
-    println("collected %d word types from a corpus of %d words (unigram + bigrams) and %d sentences".format(vocab_for_given_sentences.size, total_words, sentence_no + 1))
-    println("Vocab for given sentence:" + vocab_for_given_sentences.wordCounts.mkString(","))
-    return (min_reduce, vocab_for_given_sentences, total_words)
+  def addVocab(sentences: Phraser.SENTENCES_TYPE): Unit = {
+    val sentenceCorpus = Phrases.learnVocab(sentences, this.config)
+    mergeSentenceVocabWithCorpus(sentenceCorpus)
   }
 
-  def addVocab(sentences: Phraser.SENTENCES_TYPE): Unit = {
-    val (min_reduce, vocab, total_words) = this.learnVocab(sentences, config)
+  def mergeSentenceVocabWithCorpus(sentenceVocab: SentenceCorpus): Unit = {
+    val (min_reduce, vocab, total_words) = (sentenceVocab.min_reduce, sentenceVocab.corpus, sentenceVocab.total_words)
     corpus_word_count = corpus_word_count + total_words
 
     if (!corpus_vocab.isEmpty()) {
-      println("merging %d counts into %d".format(vocab.size(), corpus_vocab.size()))
+      println("merging %d counts into %d".format(vocab.size, corpus_vocab.size()))
 
       this.corpus_min_reduce = Math.max(this.corpus_min_reduce, min_reduce)
       corpus_vocab.merge(vocab)
@@ -80,9 +32,9 @@ case class Phrases(config: PhrasesConfig, scorer: BigramScorer) extends Serializ
         corpus_vocab.pruneVocab(this.corpus_min_reduce)
         corpus_min_reduce = corpus_min_reduce + 1
       }
-      println("merged %d counts into %d".format(vocab.size(), corpus_vocab.size()))
+      println("merged %d counts into %d".format(vocab.size, corpus_vocab.size()))
     } else {
-      corpus_vocab = vocab
+      corpus_vocab = new Vocab(this.config.delimiter, vocab)
     }
   }
 
@@ -134,7 +86,7 @@ case class Phrases(config: PhrasesConfig, scorer: BigramScorer) extends Serializ
 
             var chain_of_common_terms = new ListBuffer[String]()
             breakable {
-              for (j <- i to tokens.length) {
+              for (j <- i to tokens.length-1) {
                 if (config.isCommonWord(tokens(j))) {
                   chain_of_common_terms += tokens(j)
                 } else {
@@ -162,6 +114,60 @@ case class Phrases(config: PhrasesConfig, scorer: BigramScorer) extends Serializ
 }
 
 object Phrases {
+
+  def learnVocab(sentences: Phraser.SENTENCES_TYPE, config: PhrasesConfig): SentenceCorpus = {
+
+    // """Collect unigram/bigram counts from the `sentences` iterable."""
+
+    var sentence_no = -1
+    var total_words = 0
+
+    // println("collecting all words and their counts:" + sentences)
+    var vocab_for_given_sentences = new Vocab(config.delimiter)
+    var min_reduce = 1
+    for (sentence <- sentences) {
+      sentence_no = sentence_no + 1
+      if (sentence_no % config.progressPer == 0) {
+        // println("PROGRESS: at sentence #%d, processed %d words and %d word types".format(sentence_no, total_words, vocab_for_given_sentences.size))
+      }
+
+      // get nGrams for sentence
+      var last_uncommon_word: Option[String] = None
+      var in_between_words: Option[ListBuffer[String]] = None
+      for (word <- sentence) {
+        val is_not_common = !config.isCommonWord(word)
+        if (is_not_common) {
+          vocab_for_given_sentences.addWord(word, 1)
+          if (last_uncommon_word.isDefined) {
+            var chain = Seq(last_uncommon_word.get)
+            if(in_between_words.isDefined) {
+              chain = chain ++ in_between_words.get
+            }
+            chain = chain ++ Seq(word)
+            vocab_for_given_sentences.addWord(chain.mkString(vocab_for_given_sentences.delimiter), 1)
+          }
+          last_uncommon_word = Some(word)
+          in_between_words = None
+        } else if (last_uncommon_word.isDefined) {
+          if(in_between_words.isDefined) {
+            in_between_words.get += word
+          } else {
+            in_between_words = Some(ListBuffer[String](word))
+          }
+        }
+        total_words = total_words + 1
+      }
+
+      if (vocab_for_given_sentences.size() > config.maxVocabSize) {
+        // prune
+        vocab_for_given_sentences.pruneVocab(min_reduce)
+        min_reduce = min_reduce + 1
+      }
+    }
+    // println("collected %d word types from a corpus of %d words (unigram + bigrams) and %d sentences".format(vocab_for_given_sentences.size, total_words, sentence_no + 1))
+    // println("Vocab for given sentence:" + vocab_for_given_sentences.wordCounts.mkString(","))
+    return SentenceCorpus(min_reduce, vocab_for_given_sentences.wordCounts, total_words)
+  }
 
   // main() to run phrases on random sentence_stream and check the pseudo_corpus.
   def main(args: Array[String]): Unit = {
