@@ -1,6 +1,6 @@
-package spark.gensim.phraser
+package spark.phrase.phraser
 
-import spark.gensim.scorer.BigramScorer
+import spark.phrase.scorer.BigramScorer
 
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer

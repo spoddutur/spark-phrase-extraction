@@ -1,9 +1,9 @@
 import org.apache.spark.SparkContext
 import org.apache.spark.broadcast.Broadcast
 import org.apache.spark.sql.SparkSession
-import spark.gensim.{CorpusHolder, SentenceCorpus}
-import spark.gensim.phraser.{Phrases, PhrasesConfig, SimplePhrasesConfig, Util}
-import spark.gensim.scorer.BigramScorer
+import spark.phrase.{CorpusHolder, SentenceCorpus}
+import spark.phrase.phraser.{Phrases, PhrasesConfig, SimplePhrasesConfig, Util}
+import spark.phrase.scorer.BigramScorer
 
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer

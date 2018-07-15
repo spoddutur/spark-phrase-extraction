@@ -1,4 +1,4 @@
-package spark.gensim.phraser
+package spark.phrase.phraser
 
 import java.io.{FileInputStream, FileOutputStream, ObjectInputStream, ObjectOutputStream}
 

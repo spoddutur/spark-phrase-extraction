@@ -1,4 +1,4 @@
-package spark.gensim
+package spark.phrase
 
 import org.apache.spark.SparkContext
 import org.apache.spark.broadcast.Broadcast
@@ -6,8 +6,8 @@ import org.apache.spark.scheduler._
 import org.apache.spark.sql.{Dataset, SparkSession}
 import org.apache.spark.storage.StorageLevel
 import org.apache.spark.streaming.scheduler.{StreamingListener, StreamingListenerBatchCompleted}
-import spark.gensim.phraser.{Phrases, PhrasesConfig, Util, Vocab}
-import spark.gensim.scorer.BigramScorer
+import spark.phrase.phraser.{Phrases, PhrasesConfig, Util, Vocab}
+import spark.phrase.scorer.BigramScorer
 
 import scala.collection.mutable
 

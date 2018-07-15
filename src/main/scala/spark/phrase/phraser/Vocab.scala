@@ -1,4 +1,4 @@
-package spark.gensim.phraser
+package spark.phrase.phraser
 
 import scala.collection.mutable
 import scala.collection.mutable.HashMap

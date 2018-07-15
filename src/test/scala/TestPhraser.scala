@@ -1,9 +1,9 @@
 import org.junit.{Before, Test}
 import org.scalatest.junit.JUnitSuite
 import org.scalatest.prop.Checkers
-import spark.gensim.phraser.Phraser.SENTENCES_TYPE
-import spark.gensim.phraser.{Phraser, Phrases, SimplePhrasesConfig}
-import spark.gensim.scorer.BigramScorer
+import spark.phrase.phraser.Phraser.SENTENCES_TYPE
+import spark.phrase.phraser.{Phraser, Phrases, SimplePhrasesConfig}
+import spark.phrase.scorer.BigramScorer
 
 import scala.collection.mutable
 

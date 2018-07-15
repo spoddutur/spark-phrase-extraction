@@ -1,8 +1,8 @@
-package spark.gensim.scorer
+package spark.phrase.scorer
 
 import java.math.MathContext
 
-import spark.gensim.phraser.{PhrasesConfig, Vocab}
+import spark.phrase.phraser.{PhrasesConfig, Vocab}
 
 object NpmiBigramScorer extends BigramScorer {
 
