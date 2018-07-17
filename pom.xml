@@ -6,8 +6,24 @@
 
     <groupId>com.github.spoddutur</groupId>
     <artifactId>spark-phrase-extraction</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0</version>
+    <packaging>jar</packaging>
 
+    <name>spark-phrase-extraction</name>
+    <description>spark-phrase-extraction</description>
+    <url>https://github.com/spoddutur/spark-phrase-extraction</url>
+
+    <distributionManagement>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+        <repository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+    </distributionManagement>
+    
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>1.8</java.version>
