@@ -29,18 +29,9 @@ Init a set of config params. Following are the params supported:
   - `delimiter:` used to concat ngrams identified and replace in a sentence. Example Sentence: `San Francisco is a beautiful city`. After ngrams identification: `San_Francisco is a beautiful_city`. Tokens are concatenated with default "_" delimiter.
   - `progressPer:` While training, how frequently to show progress
   - `commonWords:` Used to concate common words occuring in between one gram's ex: `bank_of_america` is identified as a bigram provided `of` is set as a common word.
-  
-Initialise them as:
-```markdown
-val common_words = mutable.HashSet[String]("of", "with", "without", "and", "or", "the", "a")
-    val config: PhrasesConfig = new SimplePhrasesConfig().copy(minCount = 1, threshold = 1.0f, commonWords = Some(common_words))
-    val configBc = spark.sparkContext.broadcast(config)
-```
+
 ### 2. Init Scorer
-Fetch any of DEFAULT, NPMI, JACCARD, CHI_SQ bigram scorers or add your custom scorer.
-```markdown
-    val scorer = BigramScorer.getScorer(BigramScorer.DEFAULT)
-```
+Fetch any of DEFAULT, NPMI, JACCARD, CHI_SQ provided scorers or add your custom scorer.
 
 ### 3. Start training
 ```markdown
@@ -51,7 +42,7 @@ Fetch any of DEFAULT, NPMI, JACCARD, CHI_SQ bigram scorers or add your custom sc
   - outputPath -> where to save the model
 ```
 ### PUT TOGETHER Step 1,2 and 3:
-Putting together the three steps to train model:
+Putting together the three steps to train model. That's it!! -
 ```markdown
     val common_words = mutable.HashSet[String]("of", "with", "without", "and", "or", "the", "a")
     val config: PhrasesConfig = new SimplePhrasesConfig()
@@ -65,10 +56,14 @@ Putting together the three steps to train model:
 ```
 
 ### 4. Start Predicting
+Prediction involves 2 steps: loading model and use it to predict. 
 ```markdown
     // load model from output path in step3 above
     val phrases = Util.load[Phrases]("/tmp/gensim-model")
     val phraserBc = spark.sparkContext.broadcast(new Phraser(phrases))
+    
+    // read input sentences as dataframe
+    val sentencesDf = spark.read....
     
     // predict
     val sentenceBigramsDf = sentencesDf
@@ -78,15 +73,15 @@ Putting together the three steps to train model:
     sentenceBigramsDf.write.json("/tmp/gensim-output/")
  ```
  
- Please refer to [Predictor implementation](https://github.com/spoddutur/spark-phrase-extraction/blob/master/src/main/scala/SparkPhrasePredictor.scala) and [Trainer implementation](https://github.com/spoddutur/spark-phrase-extraction/blob/master/src/main/scala/ClusterPhraseExtractionTrainer.scala) where I've put together training and prediction as a working example.
+Please refer to [Predictor implementation](https://github.com/spoddutur/spark-phrase-extraction/blob/master/src/main/scala/SparkPhrasePredictor.scala) and [Trainer implementation](https://github.com/spoddutur/spark-phrase-extraction/blob/master/src/main/scala/ClusterPhraseExtractionTrainer.scala) where I've demoed a working example to train and predict phrases.
  
 ## How to train for Trigrams?
 - Above step trains bigrams.
-- If we want trigrams, repeat step3 for `sentenceBigramsDf` as shown below
+- If we want trigrams, repeat step3 for `sentenceBigramsDf` instead of `sentencesDf`as shown below
 ```markdown
   CorpusHolder.learnAndSave(spark, sentenceBigramsDf, configBc, scorer, outputPath)
 ```
-- Similarly repeat the step for each higher n-gram we want.
+- And so on for each of the higher n-grams we want.
 
 ## References
 - Heavily inspired from the good work that Python-Gensim has done [here](https://radimrehurek.com/gensim/models/phrases.html) and [here](http://pydoc.net/gensim/3.2.0/gensim.models.phrases/)
