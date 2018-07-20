@@ -12,7 +12,7 @@ This library is similar to phrase extraction implementation in Gensim([found her
 
 ## spark-parse-extraction provides:
 - Basic building blocks to create ML applications utilizing GenSim API's to:
-  - To Train a distributed collocation-based corpus vocabulary
+  - To Train a distributed corpus vocabulary which automatically detects common phrases (multiword expressions) from a stream of sentences. Corpus learnt is based on frequently oocuring collocated phrases.
   - To Save the trained model
   - To Load the saved model and use it with its corpus knowledge to predict collocated n-gram phrases in input sentences.
   - Scoring:
