@@ -1,8 +1,7 @@
 import org.apache.spark.sql.SparkSession
 import spark.phrase.phraser.{Phraser, Phrases, Util}
 
-//// http://dspace.uib.no/bitstream/handle/1956/11033/lyse-andersen-mwe-final.pdf?sequence=1&isAllowed=y
-object SparkGensimPhrasePredictor {
+object SparkPhrasePredictor {
 
   def main(args: Array[String]): Unit = {
     println("main")
@@ -13,14 +12,17 @@ object SparkGensimPhrasePredictor {
       .appName("streaming-gensim-phraser")
       .getOrCreate()
 
+    // load trained model and broadcast it
     val phrases = Util.load[Phrases]("/tmp/gensim-model")
     val phraserBc = spark.sparkContext.broadcast(new Phraser(phrases))
 
+    // read input
     import spark.implicits._
     val sentencesDf = spark.read
       .format("text")
       .load("/tmp/gensim-input").as[String]
 
+    // start extracting phrases from input sentences using model
     val sentenceBigramsDf = sentencesDf.map(sentence => phraserBc.value.apply(sentence.split(" ")))
     sentenceBigramsDf.write.json("/tmp/gensim-output/")
 

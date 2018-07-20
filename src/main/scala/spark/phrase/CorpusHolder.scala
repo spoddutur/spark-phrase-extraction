@@ -1,116 +1,64 @@
 package spark.phrase
 
-import org.apache.spark.SparkContext
 import org.apache.spark.broadcast.Broadcast
-import org.apache.spark.scheduler._
 import org.apache.spark.sql.{Dataset, SparkSession}
-import org.apache.spark.storage.StorageLevel
-import org.apache.spark.streaming.scheduler.{StreamingListener, StreamingListenerBatchCompleted}
 import spark.phrase.phraser.{Phrases, PhrasesConfig, Util, Vocab}
 import spark.phrase.scorer.BigramScorer
 
-import scala.collection.mutable
+case class CorpusHolder(var min_reduce: Int, vocab: Vocab, var total_words: Int) {
 
-case class SentenceCorpus(var min_reduce: Int, corpus: mutable.HashMap[String, Int], var total_words: Int) {
-
-  def merge(that: SentenceCorpus): Unit = {
-    val (min_reduce, vocab, total_words) = (that.min_reduce, that.corpus, that.total_words)
+  def merge(that: CorpusHolder): Unit = {
+    val (min_reduce, vocab, total_words) = (that.min_reduce, that.vocab, that.total_words)
     this.total_words = this.total_words + that.total_words
     this.min_reduce = Math.max(this.min_reduce, that.min_reduce)
-    that.corpus.foreach(x => this.corpus.put(x._1,x._2))
+    this.vocab.merge(that.vocab)
+    // that.corpus.foreach(x => this.corpus.put(x._1,x._2))
   }
 }
 
-object SentenceCorpus {
-
-  def merge(sentenceVocabs: Array[SentenceCorpus], config: PhrasesConfig): SentenceCorpus = {
-    var corpus_word_count = 0
-    var corpus_min_reduce = 0
-    var corpus_vocab: Vocab = null
-    for(sentenceVocab <- sentenceVocabs) {
-      val (sentence_min_reduce, sentence_corpus, sentence_total_words) = (sentenceVocab.min_reduce, sentenceVocab.corpus, sentenceVocab.total_words)
-      corpus_word_count = corpus_word_count + sentence_total_words
-
-      if (corpus_vocab != null && !corpus_vocab.isEmpty()) {
-
-        corpus_min_reduce = Math.max(corpus_min_reduce, sentence_min_reduce)
-        corpus_vocab.merge(sentence_corpus)
-        if (corpus_vocab.size() > config.maxVocabSize) {
-          corpus_vocab.pruneVocab(corpus_min_reduce)
-          corpus_min_reduce = corpus_min_reduce + 1
-        }
-      } else {
-        corpus_vocab = new Vocab(config.delimiter, sentence_corpus)
-      }
-    }
-    SentenceCorpus(corpus_min_reduce, corpus_vocab.wordCounts, corpus_word_count)
-  }
-}
 object CorpusHolder {
 
-  var phrasesBc: Broadcast[Phrases] = _
+  def learnAndSave(spark: SparkSession, sentencesDf: Dataset[String], configBc: Broadcast[PhrasesConfig], scorer: BigramScorer, outputPath: String = "/tmp/gensim-model"): Unit = {
 
-  def init(spark: SparkSession, config: PhrasesConfig, scorer: BigramScorer): Unit = {
-    val phrases = Phrases(config, scorer)
-    phrasesBc = spark.sparkContext.broadcast(phrases)
-    spark.sparkContext.addSparkListener(new SparkMonitoringListener(spark, phrasesBc))
-  }
-
-  def update1(spark: SparkSession, sentences: Dataset[String], configBc: Broadcast[PhrasesConfig]): Unit = {
     import spark.implicits._
-    val sentenceCorpusDs = sentences.foreach(sentence => {
-      val a = Array(sentence.split(" "))
-      val sv = Phrases.learnVocab(a, configBc.value)
-      CorpusHolder.phrasesBc.value.mergeSentenceVocabWithCorpus(sv)
-    })
+    // init phrases - global corpus
+    val phrases = Phrases(configBc.value, scorer)
 
-    // sentenceCorpusDs.persist(StorageLevel.MEMORY_AND_DISK)
-    //    phrasesBc.unpersist(true)
-    //    phrasesBc = spark.sparkContext.broadcast(null)
-    //    sentencesDf.foreach(sentence => phrasesBc.value.addVocab(Seq(sentence.split(" ")).toArray))
-  }
-
-  def update(spark: SparkSession, sentences: Dataset[String], configBc: Broadcast[PhrasesConfig]): Unit = {
-    import spark.implicits._
-    val sentenceCorpusDs = sentences.map(sentence => {
-      val a = Array(sentence.split(" "))
-      Phrases.learnVocab(a, configBc.value)
-    })
-    sentenceCorpusDs.createGlobalTempView("sentence_corpus")
-    sentenceCorpusDs.show()
-
-    // sentenceCorpusDs.persist(StorageLevel.MEMORY_AND_DISK)
-//    phrasesBc.unpersist(true)
-//    phrasesBc = spark.sparkContext.broadcast(null)
-//    sentencesDf.foreach(sentence => phrasesBc.value.addVocab(Seq(sentence.split(" ")).toArray))
-  }
-}
-
-case class SparkMonitoringListener(spark: SparkSession, var phrasesBc: Broadcast[Phrases]) extends SparkListener {
-
-  // update corpus
-  override def onTaskEnd(jobEnd: SparkListenerTaskEnd): Unit = {
-    import spark.implicits._
-    val x = spark.sql("SELECT * FROM global_temp.sentence_corpus").as[SentenceCorpus].collectAsList()
-    val phrases = phrasesBc.value
-//    x.foreach(r => {
-//      println(x)
-//      phrases.mergeSentenceVocabWithCorpus(r)
-//    })
-    val size = x.size()
-    for(i <- 0 to size-1) {
-      phrases.mergeSentenceVocabWithCorpus(x.get(i))
+    // add shutdown hook to save global corpus on app shutdown
+    sys.ShutdownHookThread {
+      println(phrases.pseudoCorpus())
+      Util.save(phrases, outputPath)
+      spark.stop()
     }
-    phrasesBc.unpersist(true)
-    spark.sql("select * from global_temp.sentence_corpus").show()
-    spark.sql("TRUNCATE table global_temp.sentence_corpus")
-    spark.sql("select * from global_temp.sentence_corpus").show()
-    phrasesBc = spark.sparkContext.broadcast(phrases)
+
+    // collect batch-wise corpus and merge the batch-wise corpus learnt into global corpus i.e., phrases
+    // Note: no need to broadcast phrases, as we are collecting corpus array at driver. Broadcast is to sahre a read-only cache with all executors.
+    // Also, dont worry about collecting corpus at driver as phrases because mergeSentenceVocabWithCorpus() will limit the retained corpus according to maxVocabSize config param.
+    // Just make sure that driver has ample memory to hold maxVocabLen number of words.
+    val corpusArray = sentencesDf
+      .mapPartitions[CorpusHolder]{ (sentencesInPartitionIter: Iterator[String]) => batchLearn(sentencesInPartitionIter, configBc)}
+      .collect
+      .foreach(corpus => phrases.mergeSentenceVocabWithCorpus(corpus))
   }
 
-  // save corpus
-  override def onApplicationEnd(applicationEnd: SparkListenerApplicationEnd): Unit = {
-    Util.save(phrasesBc.value, "/tmp/gensim-model1")
-    super.onApplicationEnd(applicationEnd)
+  /**
+    * Iterates through each sentence in this batch and collects corpus learnt from it
+    */
+  def batchLearn(sentenceItr: Iterator[String], configBc: Broadcast[PhrasesConfig]): Iterator[CorpusHolder] = {
+    val config = configBc.value
+    var batchWiseCorpus: CorpusHolder = null
+    var size = 0
+    while (sentenceItr.hasNext) {
+      size = size + 1
+      val sentence = sentenceItr.next()
+      val wordsInSentence = Array(sentence.split(" "))
+      val corpusLearntFromSentence = Phrases.learnVocab(wordsInSentence, configBc.value)
+      if (batchWiseCorpus == null) {
+        batchWiseCorpus = corpusLearntFromSentence
+      } else {
+        batchWiseCorpus.merge(corpusLearntFromSentence)
+      }
+    }
+    Array(batchWiseCorpus).iterator
   }
 }

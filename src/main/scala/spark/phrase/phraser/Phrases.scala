@@ -1,6 +1,6 @@
 package spark.phrase.phraser
 
-import spark.phrase.SentenceCorpus
+import spark.phrase.CorpusHolder
 import spark.phrase.scorer.BigramScorer
 
 import scala.collection.mutable
@@ -19,8 +19,8 @@ case class Phrases(config: PhrasesConfig, scorer: BigramScorer) extends Serializ
     mergeSentenceVocabWithCorpus(sentenceCorpus)
   }
 
-  def mergeSentenceVocabWithCorpus(sentenceVocab: SentenceCorpus): Unit = {
-    val (min_reduce, vocab, total_words) = (sentenceVocab.min_reduce, sentenceVocab.corpus, sentenceVocab.total_words)
+  def mergeSentenceVocabWithCorpus(sentenceVocab: CorpusHolder): Unit = {
+    val (min_reduce, vocab, total_words) = (sentenceVocab.min_reduce, sentenceVocab.vocab, sentenceVocab.total_words)
     corpus_word_count = corpus_word_count + total_words
 
     if (!corpus_vocab.isEmpty()) {
@@ -34,7 +34,7 @@ case class Phrases(config: PhrasesConfig, scorer: BigramScorer) extends Serializ
       }
       println("merged %d counts into %d".format(vocab.size, corpus_vocab.size()))
     } else {
-      corpus_vocab = new Vocab(this.config.delimiter, vocab)
+      corpus_vocab = vocab
     }
   }
 
@@ -115,7 +115,7 @@ case class Phrases(config: PhrasesConfig, scorer: BigramScorer) extends Serializ
 
 object Phrases {
 
-  def learnVocab(sentences: Phraser.SENTENCES_TYPE, config: PhrasesConfig): SentenceCorpus = {
+  def learnVocab(sentences: Phraser.SENTENCES_TYPE, config: PhrasesConfig): CorpusHolder = {
 
     // """Collect unigram/bigram counts from the `sentences` iterable."""
 
@@ -166,7 +166,7 @@ object Phrases {
     }
     // println("collected %d word types from a corpus of %d words (unigram + bigrams) and %d sentences".format(vocab_for_given_sentences.size, total_words, sentence_no + 1))
     // println("Vocab for given sentence:" + vocab_for_given_sentences.wordCounts.mkString(","))
-    return SentenceCorpus(min_reduce, vocab_for_given_sentences.wordCounts, total_words)
+    return CorpusHolder(min_reduce, vocab_for_given_sentences, total_words)
   }
 
   // main() to run phrases on random sentence_stream and check the pseudo_corpus.

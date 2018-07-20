@@ -1,12 +1,11 @@
 import org.apache.spark.sql.SparkSession
-import spark.phrase.{CorpusHolder, SentenceCorpus}
-import spark.phrase.phraser.{Phrases, PhrasesConfig, SimplePhrasesConfig, Util}
+import spark.phrase.phraser.{PhrasesConfig, SimplePhrasesConfig}
 import spark.phrase.scorer.BigramScorer
 
 import scala.collection.mutable
 
 //// http://dspace.uib.no/bitstream/handle/1956/11033/lyse-andersen-mwe-final.pdf?sequence=1&isAllowed=y
-object SparkGensimTrainer {
+object LocalPhraseExtractionTrainer {
 
   def main(args: Array[String]): Unit = {
     println("main")
@@ -23,14 +22,14 @@ object SparkGensimTrainer {
     val scorer = BigramScorer.getScorer(BigramScorer.DEFAULT)
 //  val phrases = Phrases(config, scorer)
 //  val phrasesBc = spark.sparkContext.broadcast(phrases)
-    CorpusHolder.init(spark, config, scorer)
+//    CorpusHolder.init(spark, config, scorer)
 
     import spark.implicits._
     val sentencesDf = spark.read
       .format("text")
       .load("/tmp/gensim-input").as[String]
 
-    CorpusHolder.update(spark, sentencesDf, configBc)
+//    CorpusHolder.update(spark, sentencesDf, configBc)
 
     // val df = spark.sparkContext.parallelize(Array[String]("")).toDF()
 
