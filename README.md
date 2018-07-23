@@ -6,7 +6,7 @@ This library is similar to phrase extraction implementation in Gensim([found her
 [![Build Status](https://travis-ci.org/spoddutur/spark-phrase-extraction.svg?branch=master)](https://travis-ci.org/spoddutur/spark-phrase-extraction)
 [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/spark-phrase-extraction?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=body_badge)
 [![codecov](https://codecov.io/gh/spoddutur/spark-phrase-extraction/branch/master/graph/badge.svg)](https://codecov.io/gh/spoddutur/spark-phrase-extraction)
-[![Maven Central](https://img.shields.io/maven-central/v/com.github.spoddutur/spark-phrase-extraction_1.0.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.spoddutur/spark-phrase-extraction_1.0)
+[![Maven Central](https://img.shields.io/maven-central/v/com.github.spoddutur/spark-phrase-extraction.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.spoddutur/spark-phrase-extraction)
 
 **Target audience:** Spark-Scala ML applications in the need of collocations phrase detection for their natural language processing (NLP) and information retrieval (IR) tasks.
 <br/>
